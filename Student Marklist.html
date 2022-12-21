@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    
+<!-- <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'> -->
+<script src= "https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8/dist/sweetalert2.all.min.js"></script>
+
+    <title>Student MarkList</title>
+</head>
+<style>
+
+.std{
+    line-height: 1.5;
+}
+
+</style>
+<body>
+
+<div class = 'container col-md-3  border border-2 border-dark  mt-5'>
+
+<form class="form p-3"  name="form1" >
+    <label><b>Roll No</b></label>
+    <input type = 'number' class = "float-end " name="text1"  id="rollNo" required /><br/><br/>
+    
+    <label><b>Name</b></label>
+    <input type = 'text' class = "float-end "   id="name" required /><br/><br/>
+      
+    <label><b>Mark1</b></label>
+    <input type = 'number' class = "float-end "   id="mark1" required /><br/><br/>
+
+    <label><b>Mark2</b></label>
+    <input type = 'number' class = "float-end "  id="mark2" required /><br/><br/>
+
+    <label><b>Mark3</b></label>
+    <input type = 'number'  class = "float-end "   id="mark3" required /><br/><br/>
+   
+  <div class="text-center  ">
+    <button type="submit" id="add" value="Submit"  onclick = "required()" class="btn btn-secondary px-3  ">Add</button></div>
+</form>    
+</div>  
+<h5 class="text-center mt-5">Student Datas</h6>
+<div id="studentlist">
+   
+</div> 
+
+
+<script>
+
+
+// (requird field function)  its check  all the input fields are filled or not 
+function required()
+{
+let empt = document.form1.text1.value;
+if (empt === "")
+{
+
+    Swal.fire({
+  icon: 'info',
+  text: 'Please , Fill out the field',
+})
+}
+
+else{
+    addHandler();
+}
+}
+
+
+// updated pop up 
+// function updated(){
+//     let updata = document.form1.text1.value;
+//     if(updata === ''){
+
+//     }
+    
+//     else{
+       
+//     Swal.fire({
+//   icon: 'Success',
+//   text: 'Please , Fill out the field', 
+//     })
+// }
+// }
+
+// demo student list
+
+let editFlag = false; // its used for edit datas 
+let students =[
+    {
+       
+       rollNo:101,
+       name:"Subuhan",
+       mark1:45,
+       mark2:55,
+       mark3:45
+    },
+
+    {  
+       rollNo:102,
+       name:"Lathif",
+       mark1:30,
+       mark2:55,
+       mark3:45
+    },
+
+]
+
+// add new students marklist 
+
+function  updateStudents()
+ {
+let studentList = '';
+students.forEach((student) => {
+let total = student.mark1 + student.mark2 + student.mark3;    
+let result = (student.mark1 >=35 && student.mark2 >=35 && student.mark3 >=35) ? 'Pass' : 'Fail';
+
+// add new student marklist displayed
+
+studentList += `
+          
+                <div class='col-md-2 float-start border ms-4  rounded border-2 std p-3 mt-3'>
+              
+                <b>Roll No</b> : ${student.rollNo}<br/>
+                <b>Name</b> : ${student.name}<br/>
+                <b>Mark1</b> : ${student.mark1}<br/>
+                <b>Mark2</b> : ${student.mark2}<br/>
+                <b>Mark3</b> : ${student.mark3}<br/>
+                <b>Total</b> : ${total}<br/>
+                <b>Result</b> :<span>${result}</span><br/><br/>
+
+            <button onClick='editHandler(${student.rollNo})' class="btn btn-sm btn-secondary ms-1 px-4">Edit</button>
+            <button onClick='deleteHandler(${student.rollNo})' class="btn btn-sm btn-danger ms-4 px-3">Delete</button>
+            
+            </div>`
+})
+
+document.getElementById('studentlist').innerHTML = studentList ;
+}
+
+
+
+
+// new students marklist is pushed to students array 
+
+function  addHandler() {
+event.preventDefault()   // if the display form is render we use this function to  display 
+ let rollNo = Number.parseInt(document.getElementById('rollNo').value); 
+ let name   = String (document.getElementById('name').value);
+ let mark1  = Number.parseInt(document.getElementById('mark1').value);
+ let mark2  = Number.parseInt(document.getElementById('mark2').value);
+ let mark3  = Number.parseInt(document.getElementById('mark3').value);    
+
+
+ if(editFlag) 
+        {
+            let updatedatas = students.map((student)=>{
+                if(student.rollNo == rollNo) 
+                {
+                    return {
+                        rollNo,
+                        name,
+                        mark1,
+                        mark2,
+                        mark3
+                    }
+                }
+                else
+                return student; 
+            })
+            students = [...updatedatas];
+            //console.log(updatedatas);
+        }
+
+else{
+
+students.push(
+    {  rollNo,
+       name,
+       mark1,
+       mark2,
+       mark3,
+    })
+    }
+    updateStudents();
+    clearAll();
+}
+
+
+
+
+// Edit Students marklists
+
+function editHandler (rollNo)
+{
+    editFlag = true;
+    editStudents = students.filter((student)=>{
+        if(student.rollNo == rollNo)
+            {
+                return student;
+            }
+    });
+    
+    
+    document.getElementById("rollNo").value=editStudents[0].rollNo;
+        document.getElementById("name").value=editStudents[0].name;
+        document.getElementById("mark1").value=editStudents[0].mark1;
+        document.getElementById("mark2").value=editStudents[0].mark2;
+        document.getElementById("mark3").value=editStudents[0].mark3;
+        document.getElementById("add").innerHTML="Update";
+
+
+}
+
+
+// delete students marklists 
+
+function deleteHandler(rollNo)
+    {
+        
+        deleteStudents = students.filter((student)=>{
+            if(student.rollNo!=rollNo)
+            return student;
+        })
+        
+        students = [...deleteStudents];
+     
+        updateStudents();
+    }
+
+
+
+
+
+//clearAll Function its clear all input fields
+
+function clearAll()
+    {
+        document.getElementById("rollNo").value="";
+        document.getElementById("name").value="";
+        document.getElementById("mark1").value="";
+        document.getElementById("mark2").value="";
+        document.getElementById("mark3").value="";
+        // editFlag=false;
+        document.getElementById("add").innerHTML="Add";
+    }    
+
+updateStudents();
+
+</script> 
+</body>
+</html>
+
+
